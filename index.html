@@ -1,0 +1,650 @@
+# Test.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test de Personalidad — El Amor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #e8667a;
+    --rose-dark: #c44d63;
+    --rose-light: #fce8ec;
+    --rose-pale: #fff5f7;
+    --gold: #d4a853;
+    --gold-light: #f9f0dc;
+    --ink: #1a1118;
+    --ink-soft: #4a3f47;
+    --ink-muted: #8a7a84;
+    --cream: #fdf8f5;
+    --white: #ffffff;
+  }
+ 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+ 
+  /* ── Background decorative ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 10%, rgba(232,102,122,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 10% 90%, rgba(212,168,83,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+ 
+  .page { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
+ 
+  /* ── Cover ── */
+  #cover {
+    text-align: center;
+    padding: 60px 0 40px;
+    animation: fadeUp 0.8s ease both;
+  }
+ 
+  .cover-tag {
+    display: inline-block;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--rose); border: 1px solid var(--rose);
+    padding: 5px 16px; border-radius: 20px;
+    margin-bottom: 28px;
+  }
+ 
+  #cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 7vw, 64px);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+ 
+  #cover h1 em { color: var(--rose); font-style: italic; }
+ 
+  #cover p {
+    font-size: 16px; color: var(--ink-muted);
+    max-width: 420px; margin: 0 auto 40px; line-height: 1.7;
+  }
+ 
+  .hearts-row {
+    display: flex; justify-content: center; gap: 12px;
+    margin-bottom: 40px; font-size: 22px;
+    animation: float 3s ease-in-out infinite;
+  }
+ 
+  .start-btn {
+    display: inline-block;
+    background: var(--rose); color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    padding: 15px 44px; border-radius: 50px;
+    border: none; cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(232,102,122,0.3);
+  }
+  .start-btn:hover { background: var(--rose-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,102,122,0.4); }
+ 
+  /* ── Quiz ── */
+  #quiz { display: none; animation: fadeUp 0.6s ease both; }
+ 
+  .progress-wrap { margin-bottom: 36px; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--ink-muted);
+    margin-bottom: 8px; letter-spacing: 0.5px;
+  }
+  .progress-track {
+    height: 3px; background: #ead8dc;
+    border-radius: 10px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--rose-dark), var(--rose));
+    border-radius: 10px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+ 
+  .question-card {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 2px 40px rgba(26,17,24,0.07);
+    margin-bottom: 24px;
+    border: 1px solid rgba(232,102,122,0.1);
+  }
+ 
+  .q-number {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--rose); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .q-number::after { content: ''; flex: 1; height: 1px; background: var(--rose-light); }
+ 
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 3vw, 22px);
+    line-height: 1.5; color: var(--ink);
+    margin-bottom: 32px;
+  }
+ 
+  .options { display: flex; flex-direction: column; gap: 10px; }
+ 
+  .opt {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--cream); border: 1.5px solid transparent;
+    border-radius: 14px; padding: 14px 18px;
+    cursor: pointer; transition: all 0.2s;
+    text-align: left; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--ink-soft);
+  }
+  .opt:hover { background: var(--rose-pale); border-color: var(--rose); color: var(--rose-dark); }
+  .opt.selected { background: var(--rose-pale); border-color: var(--rose); color: var(--rose-dark); font-weight: 500; }
+  .opt.selected .opt-letter { background: var(--rose); color: white; }
+ 
+  .opt-letter {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: white; border: 1.5px solid #ddd;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500; flex-shrink: 0;
+    transition: all 0.2s;
+  }
+ 
+  .nav-row { display: flex; justify-content: space-between; align-items: center; }
+ 
+  .btn-back {
+    background: none; border: 1.5px solid #ddd;
+    color: var(--ink-muted); padding: 12px 24px;
+    border-radius: 50px; cursor: pointer; font-size: 14px;
+    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-back:hover { border-color: var(--ink-soft); color: var(--ink); }
+  .btn-back:disabled { opacity: 0.3; cursor: not-allowed; }
+ 
+  .btn-next {
+    background: var(--rose); color: white;
+    border: none; padding: 13px 32px;
+    border-radius: 50px; cursor: pointer; font-size: 14px; font-weight: 500;
+    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 4px 14px rgba(232,102,122,0.3);
+  }
+  .btn-next:hover:not(:disabled) { background: var(--rose-dark); transform: translateY(-1px); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+ 
+  /* ── Result ── */
+  #result { display: none; animation: fadeUp 0.7s ease both; }
+ 
+  .result-hero {
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 4px 50px rgba(26,17,24,0.1);
+    margin-bottom: 28px;
+    border: 1px solid rgba(232,102,122,0.12);
+  }
+ 
+  .result-banner {
+    background: linear-gradient(135deg, var(--rose-dark) 0%, var(--rose) 60%, #f09aa8 100%);
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-banner::before {
+    content: '♥ ♡ ♥ ♡ ♥';
+    position: absolute; top: 12px; left: 0; right: 0;
+    font-size: 13px; color: rgba(255,255,255,0.2);
+    letter-spacing: 8px;
+  }
+ 
+  .char-img-wrap {
+    width: 130px; height: 130px; border-radius: 50%;
+    background: white;
+    margin: 0 auto 20px;
+    overflow: hidden;
+    border: 4px solid rgba(255,255,255,0.5);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 70px;
+  }
+ 
+  .char-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+ 
+  .result-you { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+  .result-name { font-family: 'Playfair Display', serif; font-size: 34px; color: white; margin-bottom: 4px; }
+  .result-from { font-size: 13px; color: rgba(255,255,255,0.75); font-style: italic; }
+ 
+  .result-body { padding: 36px 40px; }
+ 
+  .result-desc {
+    font-size: 15px; line-height: 1.8; color: var(--ink-soft);
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #f0e8ea;
+  }
+ 
+  .traits-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 12px; }
+ 
+  .traits { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .trait {
+    background: var(--rose-pale); color: var(--rose-dark);
+    border-radius: 20px; padding: 5px 14px; font-size: 13px;
+    border: 1px solid var(--rose-light);
+  }
+ 
+  /* Table */
+  .table-section {
+    background: white; border-radius: 24px;
+    padding: 32px 40px;
+    box-shadow: 0 2px 30px rgba(26,17,24,0.06);
+    border: 1px solid rgba(232,102,122,0.1);
+    margin-bottom: 28px;
+  }
+  .table-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; margin-bottom: 24px; color: var(--ink);
+  }
+ 
+  .char-table { width: 100%; border-collapse: collapse; }
+  .char-table th {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--ink-muted); padding: 10px 12px;
+    border-bottom: 1.5px solid #f0e8ea; text-align: left;
+  }
+  .char-table td { padding: 14px 12px; border-bottom: 1px solid #faf0f2; vertical-align: middle; }
+  .char-table tr:last-child td { border-bottom: none; }
+ 
+  .table-char-img {
+    width: 44px; height: 44px; border-radius: 50%;
+    overflow: hidden; background: var(--rose-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; flex-shrink: 0;
+  }
+  .table-char-img img { width: 100%; height: 100%; object-fit: cover; }
+ 
+  .char-info { display: flex; align-items: center; gap: 12px; }
+  .char-name-cell { font-weight: 500; font-size: 14px; color: var(--ink); }
+  .char-from-cell { font-size: 12px; color: var(--ink-muted); font-style: italic; }
+ 
+  .majority-tag {
+    background: var(--rose-pale); color: var(--rose-dark);
+    font-size: 11px; padding: 3px 10px; border-radius: 10px;
+    font-weight: 500;
+  }
+ 
+  .score-row { display: flex; align-items: center; gap: 8px; }
+  .mini-bar { height: 6px; border-radius: 3px; background: var(--rose); min-width: 4px; }
+ 
+  /* Restart */
+  .restart-btn {
+    display: block; width: 100%; text-align: center;
+    background: none; border: 1.5px solid var(--rose);
+    color: var(--rose); padding: 14px;
+    border-radius: 50px; cursor: pointer; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .restart-btn:hover { background: var(--rose); color: white; }
+ 
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+ 
+  /* Decoration lines */
+  .deco-line {
+    text-align: center; font-size: 18px;
+    color: var(--rose); letter-spacing: 8px;
+    margin: 20px 0; opacity: 0.4;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+ 
+  <!-- COVER -->
+  <div id="cover">
+    <div class="cover-tag">Test de personalidad</div>
+    <h1>¿Cómo ligas<br>cuando <em>te enamoras?</em></h1>
+    <p>Responde 11 preguntas y descubre qué personaje ficticio representa tu forma de amar y conquistar.</p>
+    <div class="hearts-row">💘 🌹 💌 🌹 💘</div>
+    <button class="start-btn" onclick="startQuiz()">Comenzar el test →</button>
+  </div>
+ 
+  <!-- QUIZ -->
+  <div id="quiz">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="prog-text">Pregunta 1 de 11</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
+    </div>
+ 
+    <div class="question-card">
+      <div class="q-number" id="q-num">01</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="q-opts"></div>
+    </div>
+ 
+    <div class="nav-row">
+      <button class="btn-back" id="btn-prev" onclick="prevQ()" disabled>← Anterior</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Siguiente →</button>
+    </div>
+  </div>
+ 
+  <!-- RESULT -->
+  <div id="result">
+    <div class="deco-line">· · · ♥ · · ·</div>
+    <div class="result-hero">
+      <div class="result-banner">
+        <div class="char-img-wrap" id="res-img"></div>
+        <div class="result-you">Tu personaje es</div>
+        <div class="result-name" id="res-name"></div>
+        <div class="result-from" id="res-from"></div>
+      </div>
+      <div class="result-body">
+        <div class="result-desc" id="res-desc"></div>
+        <div class="traits-title">Tus rasgos principales</div>
+        <div class="traits" id="res-traits"></div>
+      </div>
+    </div>
+ 
+    <!-- Score table -->
+    <div class="table-section">
+      <div class="table-title">Tabla de personajes y resultados</div>
+      <table class="char-table">
+        <thead>
+          <tr>
+            <th>Personaje</th>
+            <th>Mayoría de respuestas</th>
+            <th>Tu puntuación</th>
+          </tr>
+        </thead>
+        <tbody id="score-tbody"></tbody>
+      </table>
+    </div>
+ 
+    <button class="restart-btn" onclick="restart()">🔄 Repetir el test</button>
+  </div>
+ 
+</div>
+ 
+<script>
+const questions = [
+  {
+    text: "¿Cuándo estás con alguien que te gusta, qué sueles hacer?",
+    options: [
+      { letter:"A", text:"Le hablo directamente y le digo lo que siento", type:"A" },
+      { letter:"B", text:"Espero a que él/ella dé el primer paso", type:"B" },
+      { letter:"C", text:"Me pongo nervios@ y no hago nada", type:"C" },
+      { letter:"D", text:"Le mando señales indirectas", type:"D" }
+    ]
+  },
+  {
+    text: "¿Cuál sería tu cita ideal?",
+    options: [
+      { letter:"A", text:"Ir al cine", type:"B" },
+      { letter:"B", text:"Ir por un café", type:"C" },
+      { letter:"C", text:"Andar por el parque", type:"D" },
+      { letter:"D", text:"Una cena elegante", type:"A" }
+    ]
+  },
+  {
+    text: "¿Estás forrad@ de papel (tienes dinero para las citas)?",
+    options: [
+      { letter:"A", text:"Sí, bastante", type:"A" },
+      { letter:"B", text:"Más o menos", type:"B" },
+      { letter:"C", text:"Poco, soy más de planes creativos", type:"C" },
+      { letter:"D", text:"Nah, prefiero planes sin gastar", type:"D" }
+    ]
+  },
+  {
+    text: "¿Alguien te pide que salgas antes de que tú lo hagas? ¿Qué haces?",
+    options: [
+      { letter:"A", text:"Acepto de inmediato, me encanta", type:"A" },
+      { letter:"B", text:"Acepto pero analizo si es buena idea", type:"B" },
+      { letter:"C", text:"Me emociono pero finjo calma", type:"D" },
+      { letter:"D", text:"Me pongo nervios@ y casi digo que no", type:"C" }
+    ]
+  },
+  {
+    text: "¿Cuál es tu lugar favorito para una cita?",
+    options: [
+      { letter:"A", text:"Un lugar tranquilo e íntimo", type:"B" },
+      { letter:"B", text:"Música fuerte y fiesta", type:"A" },
+      { letter:"C", text:"Algún lugar al aire libre", type:"D" },
+      { letter:"D", text:"Cualquier lugar, lo importante es la persona", type:"C" }
+    ]
+  },
+  {
+    text: "¿Qué tan importante es para ti que la otra persona tome la iniciativa?",
+    options: [
+      { letter:"A", text:"Mucho, me gusta que me conquisten", type:"B" },
+      { letter:"B", text:"Algo, pero también me gusta actuar", type:"C" },
+      { letter:"C", text:"Poco, prefiero yo dar el paso", type:"A" },
+      { letter:"D", text:"Nada, siempre tomo la iniciativa", type:"A" }
+    ]
+  },
+  {
+    text: "¿Cómo describes tu forma de ligar?",
+    options: [
+      { letter:"A", text:"Soy directa/o", type:"A" },
+      { letter:"B", text:"Tu amig@ que de repente…", type:"B" },
+      { letter:"C", text:"Amig@ indirecto/a con señales", type:"C" },
+      { letter:"D", text:"Empatizo como amig@ y enamoro sin querer", type:"D" }
+    ]
+  },
+  {
+    text: "¿Cuál actitud crees que te sirve más al ligar?",
+    options: [
+      { letter:"A", text:"La honestidad: decirle lo que sientes", type:"A" },
+      { letter:"B", text:"La paciencia y el misterio", type:"D" },
+      { letter:"C", text:"Que elogies y hagas reír", type:"B" },
+      { letter:"D", text:"Ser segur@ de ti mism@", type:"A" }
+    ]
+  },
+  {
+    text: "¿Qué tipo de música de fondo pondría tu cita ideal?",
+    options: [
+      { letter:"A", text:"Romántica / boleros", type:"B" },
+      { letter:"B", text:"Pop y reggaetón", type:"A" },
+      { letter:"C", text:"Indie / alternativa", type:"D" },
+      { letter:"D", text:"Ninguna, mejor silencio y conversación", type:"C" }
+    ]
+  },
+  {
+    text: "¿Algo de los gustos de alguien te alejaría?",
+    options: [
+      { letter:"A", text:"Que no sea bromist@", type:"A" },
+      { letter:"B", text:"Que no tenga metas", type:"B" },
+      { letter:"C", text:"Que sea fals@ o muy intense@", type:"C" },
+      { letter:"D", text:"Que no le gusten los animales", type:"D" }
+    ]
+  },
+  {
+    text: "¿Te cuesta creer en el amor?",
+    options: [
+      { letter:"A", text:"No, soy muy romantic@", type:"B" },
+      { letter:"B", text:"A veces, depende de la persona", type:"C" },
+      { letter:"C", text:"Un poco, prefiero que me lo demuestren", type:"A" },
+      { letter:"D", text:"Sí, he aprendido a ser más caut@", type:"D" }
+    ]
+  }
+];
+ 
+const characters = {
+  A: {
+    name: "Elizabeth Bennet",
+    from: "Orgullo y Prejuicio",
+    emoji: "👑",
+    imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Keira_Knightley_in_Pride_%26_Prejudice_%282005%29.jpg/440px-Keira_Knightley_in_Pride_%26_Prejudice_%282005%29.jpg",
+    desc: "Eres directa/o, segura/o y no tienes miedo de decir lo que piensas. Al ligar, tu honestidad y confianza son tu mayor arma. Atraes a las personas con tu autenticidad y tu buen humor. No juegas juegos, y eso hace que la gente quiera conquistarte aún más.",
+    traits: ["Directa/o", "Segura/o de ti", "Auténtica/o", "Carismática/o", "Honesta/o"],
+    color: "#e8667a"
+  },
+  B: {
+    name: "Mr. Darcy",
+    from: "Orgullo y Prejuicio",
+    emoji: "🎩",
+    imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Matthew_Macfadyen_%281%29.jpg/440px-Matthew_Macfadyen_%281%29.jpg",
+    desc: "Eres estratégica/o y observadora/or. No te lanzas a la primera — prefieres analizar antes de actuar. Puedes parecer distante al principio, pero cuando te abres, enamoras profundamente. Tu paciencia y seguridad silenciosa son irresistibles.",
+    traits: ["Paciente", "Estratégica/o", "Reservada/o", "Profunda/o", "Romántica/o"],
+    color: "#534AB7"
+  },
+  C: {
+    name: "Peter Parker",
+    from: "Spider-Man",
+    emoji: "🕷️",
+    imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Tom_Holland_Spider-Man.jpg/440px-Tom_Holland_Spider-Man.jpg",
+    desc: "Eres tímida/o al principio, pero cuando alguien se toma el tiempo de conocerte, descubren a alguien increíble. Tu forma de ligar es sin querer — y eso enamora más que cualquier técnica. Eres leal, genuina/o y con un corazón enorme.",
+    traits: ["Tímida/o", "Genuina/o", "Leal", "Tierna/o", "Sorprendente"],
+    color: "#185FA5"
+  },
+  D: {
+    name: "Wednesday Addams",
+    from: "Los Locos Addams",
+    emoji: "🖤",
+    imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Jenna_Ortega_2022_%28cropped%29.jpg/440px-Jenna_Ortega_2022_%28cropped%29.jpg",
+    desc: "Eres todo un misterio. Tu forma de ligar es indirecta, enigmática, y eso vuelve locas a las personas que te rodean. No sigues las reglas del juego convencional — creas tus propias reglas. Quien logra descubrirte, no te olvida jamás.",
+    traits: ["Misteriosa/o", "Indirecta/o", "Única/o", "Magnética/o", "Independiente"],
+    color: "#2C2C2A"
+  }
+};
+ 
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+let counts = { A: 0, B: 0, C: 0, D: 0 };
+ 
+function startQuiz() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQ();
+}
+ 
+function renderQ() {
+  const q = questions[current];
+  const total = questions.length;
+  const pct = Math.round((current / total) * 100);
+ 
+  document.getElementById('prog-text').textContent = `Pregunta ${current + 1} de ${total}`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('q-num').textContent = String(current + 1).padStart(2, '0');
+  document.getElementById('q-text').textContent = q.text;
+ 
+  const optsEl = document.getElementById('q-opts');
+  optsEl.innerHTML = '';
+  q.options.forEach((op, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt' + (answers[current] === i ? ' selected' : '');
+    btn.innerHTML = `<div class="opt-letter">${op.letter}</div><span>${op.text}</span>`;
+    btn.onclick = () => {
+      answers[current] = i;
+      document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      btn.querySelector('.opt-letter').style.background = 'var(--rose)';
+      btn.querySelector('.opt-letter').style.color = 'white';
+      btn.querySelector('.opt-letter').style.borderColor = 'var(--rose)';
+      document.getElementById('btn-next').disabled = false;
+      if (current === total - 1) document.getElementById('btn-next').textContent = 'Ver mi resultado ✨';
+    };
+    optsEl.appendChild(btn);
+  });
+ 
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = answers[current] === null;
+  document.getElementById('btn-next').textContent = current === total - 1 ? 'Ver mi resultado ✨' : 'Siguiente →';
+}
+ 
+function nextQ() {
+  if (answers[current] === null) return;
+  if (current < questions.length - 1) { current++; renderQ(); }
+  else showResult();
+}
+ 
+function prevQ() {
+  if (current > 0) { current--; renderQ(); }
+}
+ 
+function showResult() {
+  counts = { A: 0, B: 0, C: 0, D: 0 };
+  answers.forEach((ans, qi) => {
+    if (ans === null) return;
+    const type = questions[qi].options[ans]?.type;
+    if (type) counts[type]++;
+  });
+ 
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const winner = sorted[0][0];
+  const ch = characters[winner];
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+ 
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+ 
+  // Image — use emoji fallback if image fails
+  const imgWrap = document.getElementById('res-img');
+  const img = document.createElement('img');
+  img.src = ch.imgUrl;
+  img.alt = ch.name;
+  img.onerror = () => { imgWrap.innerHTML = ch.emoji; };
+  imgWrap.appendChild(img);
+ 
+  document.getElementById('res-name').textContent = ch.name;
+  document.getElementById('res-from').textContent = ch.from;
+  document.getElementById('res-desc').textContent = ch.desc;
+ 
+  const traitsEl = document.getElementById('res-traits');
+  traitsEl.innerHTML = ch.traits.map(t => `<span class="trait">${t}</span>`).join('');
+ 
+  // Score table
+  const tbody = document.getElementById('score-tbody');
+  tbody.innerHTML = '';
+  Object.entries(characters).forEach(([key, c]) => {
+    const cnt = counts[key] || 0;
+    const pct = total > 0 ? Math.round((cnt / total) * 100) : 0;
+    const isWinner = key === winner;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="char-info">
+          <div class="table-char-img" style="background:${c.color}20">${c.emoji}</div>
+          <div>
+            <div class="char-name-cell">${c.name} ${isWinner ? '<span class="majority-tag">¡Tu resultado!</span>' : ''}</div>
+            <div class="char-from-cell">${c.from}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-size:13px;color:var(--ink-muted)">Mayoría de respuestas <strong style="color:${c.color}">${key}</strong></td>
+      <td>
+        <div class="score-row">
+          <div class="mini-bar" style="width:${Math.max(pct,4)}px;background:${c.color}"></div>
+          <span style="font-size:13px;color:var(--ink-muted)">${cnt} (${pct}%)</span>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+ 
+function restart() {
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  counts = { A: 0, B: 0, C: 0, D: 0 };
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('cover').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
